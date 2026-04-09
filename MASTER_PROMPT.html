@@ -1,0 +1,2071 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PromptArchitect Ultra — Masterclass Definitiva de Prompt Engineering & Android Architecture</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.0/index.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/fira-code@5.0.0/index.min.css" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['Fira Code', 'monospace'],
+      },
+      colors: {
+        brand: {
+          50: '#f0f4ff',
+          100: '#dbe4ff',
+          200: '#bac8ff',
+          300: '#91a7ff',
+          400: '#748ffc',
+          500: '#5c7cfa',
+          600: '#4c6ef5',
+          700: '#4263eb',
+          800: '#3b5bdb',
+          900: '#364fc7',
+          950: '#1e2d6d',
+        },
+        dark: {
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+          950: '#020617',
+        }
+      },
+      animation: {
+        'float': 'float 6s ease-in-out infinite',
+        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'gradient': 'gradient 8s ease infinite',
+        'slide-up': 'slideUp 0.6s ease-out',
+        'slide-down': 'slideDown 0.3s ease-out',
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'scale-in': 'scaleIn 0.3s ease-out',
+        'shimmer': 'shimmer 2s linear infinite',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+        gradient: {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(30px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        slideDown: {
+          '0%': { transform: 'translateY(-10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        scaleIn: {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+      }
+    }
+  }
+}
+</script>
+<style>
+  * { scrollbar-width: thin; scrollbar-color: #4c6ef5 #1e293b; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0f172a; }
+  ::-webkit-scrollbar-thumb { background: #4c6ef5; border-radius: 3px; }
+  
+  .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(76, 110, 245, 0.15); }
+  .glass-light { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(12px); border: 1px solid rgba(76, 110, 245, 0.1); }
+  .glass-card { background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.8)); backdrop-filter: blur(20px); border: 1px solid rgba(76, 110, 245, 0.15); }
+  
+  .gradient-text { background: linear-gradient(135deg, #748ffc, #c084fc, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .gradient-border { position: relative; }
+  .gradient-border::before { content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; background: linear-gradient(135deg, #748ffc, #c084fc, #f472b6); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  
+  .code-block { background: linear-gradient(135deg, #0f172a, #1e293b); border: 1px solid rgba(76, 110, 245, 0.2); }
+  .code-block pre { font-family: 'Fira Code', monospace; font-size: 0.85rem; line-height: 1.6; }
+  
+  .section-visible { opacity: 1; transform: translateY(0); }
+  .section-hidden { opacity: 0; transform: translateY(40px); }
+  
+  .nav-active { background: linear-gradient(90deg, rgba(76, 110, 245, 0.2), transparent); border-left: 3px solid #748ffc; }
+  
+  .prompt-card { transition: all 0.3s ease; }
+  .prompt-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(76, 110, 245, 0.15); }
+  
+  .category-badge { transition: all 0.2s ease; }
+  .category-badge:hover { transform: scale(1.05); }
+  .category-badge.active { background: linear-gradient(135deg, #4c6ef5, #748ffc); color: white; }
+  
+  .progress-ring { transform: rotate(-90deg); }
+  .progress-ring circle { transition: stroke-dashoffset 0.5s ease; }
+  
+  .toast { animation: slideDown 0.3s ease-out, fadeIn 0.3s ease-out; }
+  
+  .hero-gradient { background: radial-gradient(ellipse at 30% 20%, rgba(76, 110, 245, 0.15) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(192, 132, 252, 0.1) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, rgba(244, 114, 182, 0.05) 0%, transparent 50%); }
+  
+  .pattern-grid { background-image: radial-gradient(rgba(76, 110, 245, 0.1) 1px, transparent 1px); background-size: 24px 24px; }
+  
+  .shimmer-bg { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); background-size: 200% 100%; }
+  
+  @media (max-width: 1024px) {
+    .sidebar { display: none; }
+    .main-content { margin-left: 0 !important; }
+  }
+  
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  
+  .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .accordion-content.open { max-height: 2000px; }
+  
+  .copy-btn { transition: all 0.2s ease; }
+  .copy-btn:hover { background: rgba(76, 110, 245, 0.3); }
+  .copy-btn.copied { background: rgba(34, 197, 94, 0.3); }
+</style>
+</head>
+<body class="bg-dark-950 text-gray-200 font-sans antialiased overflow-x-hidden">
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed top-6 right-6 z-[100] hidden">
+  <div class="toast glass rounded-xl px-6 py-4 flex items-center gap-3 shadow-2xl">
+    <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+      <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <span class="text-sm font-medium text-green-300" id="toastMsg">¡Copiado al portapapeles!</span>
+  </div>
+</div>
+
+<!-- Mobile Menu Button -->
+<button id="mobileMenuBtn" class="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 glass rounded-lg flex items-center justify-center">
+  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+</button>
+
+<!-- Mobile Sidebar -->
+<div id="mobileSidebar" class="fixed inset-0 z-40 hidden lg:hidden">
+  <div class="absolute inset-0 bg-black/60" id="mobileOverlay"></div>
+  <div class="absolute left-0 top-0 bottom-0 w-72 glass overflow-y-auto">
+    <nav class="p-4 pt-16" id="mobileNav"></nav>
+  </div>
+</div>
+
+<!-- Sidebar Navigation -->
+<aside class="sidebar fixed left-0 top-0 h-screen w-64 glass z-30 overflow-y-auto border-r border-brand-900/30">
+  <div class="p-6">
+    <a href="#hero" class="flex items-center gap-3 mb-8 group">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-purple-500 flex items-center justify-center shadow-lg shadow-brand-500/25 group-hover:shadow-brand-500/40 transition-shadow">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      </div>
+      <div>
+        <span class="text-sm font-bold text-white tracking-wide">PromptArchitect</span>
+        <span class="text-[10px] text-brand-400 block">ULTRA v4.0</span>
+      </div>
+    </a>
+
+    <nav class="space-y-1" id="sidebarNav">
+      <a href="#hero" class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Inicio
+      </a>
+      <a href="#economia" class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+        <span class="w-5 h-5 rounded bg-brand-500/20 text-brand-400 flex items-center justify-center text-xs font-bold">01</span>
+        Economía Token
+      </a>
+      <a href="#anatomia" class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+        <span class="w-5 h-5 rounded bg-brand-500/20 text-brand-400 flex items-center justify-center text-xs font-bold">02</span>
+        Anatomía
+      </a>
+      <a href="#videcode" class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+        <span class="w-5 h-5 rounded bg-brand-500/20 text-brand-400 flex items-center justify-center text-xs font-bold">03</span>
+        Videcode
+      </a>
+      <a href="#anti-hallucination" class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+        <span class="w-5 h-5 rounded bg-brand-500/20 text-brand-400 flex items-center justify-center text-xs font-bold">04</span>
+        Anti-Hallucination
+      </a>
+      <a href="#templates" class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+        <span class="w-5 h-5 rounded bg-brand-500/20 text-brand-400 flex items-center justify-center text-xs font-bold">05</span>
+        Templates
+      </a>
+      <a href="#portfolio" class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+        <span class="w-5 h-5 rounded bg-brand-500/20 text-brand-400 flex items-center justify-center text-xs font-bold">06</span>
+        Portfolio Forge
+      </a>
+      <a href="#android" class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+        <span class="w-5 h-5 rounded bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs font-bold">07</span>
+        Android Prompts
+      </a>
+      <a href="#checklist" class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+        <span class="w-5 h-5 rounded bg-brand-500/20 text-brand-400 flex items-center justify-center text-xs font-bold">08</span>
+        Checklist
+      </a>
+      <a href="#errores" class="nav-link flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all">
+        <span class="w-5 h-5 rounded bg-red-500/20 text-red-400 flex items-center justify-center text-xs font-bold">09</span>
+        Errores
+      </a>
+    </nav>
+  </div>
+
+  <!-- Progress -->
+  <div class="p-6 border-t border-brand-900/30">
+    <div class="flex items-center justify-between text-xs text-gray-500 mb-2">
+      <span>Progreso</span>
+      <span id="progressPercent">0%</span>
+    </div>
+    <div class="w-full h-1.5 bg-dark-800 rounded-full overflow-hidden">
+      <div id="progressBar" class="h-full bg-gradient-to-r from-brand-500 to-purple-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+    </div>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content lg:ml-64 min-h-screen">
+  
+  <!-- Hero Section -->
+  <section id="hero" class="relative min-h-screen flex items-center justify-center hero-gradient pattern-grid overflow-hidden">
+    <!-- Floating Elements -->
+    <div class="absolute top-20 left-10 w-72 h-72 bg-brand-500/10 rounded-full blur-3xl animate-float"></div>
+    <div class="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-float" style="animation-delay: -3s"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-600/5 rounded-full blur-3xl"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-6 py-20 text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-xs text-brand-300 mb-8 animate-fade-in">
+        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+        ROI Mode: ON — Tokens Saved: <span id="heroTokens" class="font-mono text-green-400 font-bold">0</span>
+      </div>
+
+      <h1 class="text-5xl md:text-7xl font-black mb-6 leading-tight animate-slide-up">
+        <span class="gradient-text">PromptArchitect</span>
+        <br>
+        <span class="text-white text-4xl md:text-6xl">Ultra Masterclass</span>
+      </h1>
+
+      <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto mb-12 animate-slide-up" style="animation-delay: 0.1s">
+        Fusión definitiva de <span class="text-brand-400 font-semibold">5 frameworks élite</span>: Zero Waste, Videcode, Token Density, Portfolio Architecture & Android Architect. Cada token cuenta. Cada instrucción tiene impacto.
+      </p>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto mb-12 animate-slide-up" style="animation-delay: 0.2s">
+        <div class="glass rounded-2xl p-4 text-center">
+          <div class="text-2xl md:text-3xl font-black gradient-text">85%</div>
+          <div class="text-xs text-gray-500 mt-1">Reducción Tokens</div>
+        </div>
+        <div class="glass rounded-2xl p-4 text-center">
+          <div class="text-2xl md:text-3xl font-black gradient-text">400%</div>
+          <div class="text-xs text-gray-500 mt-1">Precisión</div>
+        </div>
+        <div class="glass rounded-2xl p-4 text-center">
+          <div class="text-2xl md:text-3xl font-black gradient-text">20+</div>
+          <div class="text-xs text-gray-500 mt-1">Android Prompts</div>
+        </div>
+        <div class="glass rounded-2xl p-4 text-center">
+          <div class="text-2xl md:text-3xl font-black gradient-text">∞</div>
+          <div class="text-xs text-gray-500 mt-1">Aplicabilidad</div>
+        </div>
+      </div>
+
+      <!-- Hero Image -->
+      <div class="relative max-w-4xl mx-auto animate-slide-up" style="animation-delay: 0.3s">
+        <div class="absolute inset-0 bg-gradient-to-t from-dark-950 via-transparent to-transparent z-10 rounded-2xl"></div>
+        <img src="https://image.qwenlm.ai/public_source/85e1c667-d1a7-4470-813b-1388ecc7e287/1e46f4eb4-5196-4d35-a44d-bffb5e0b88f4.png" alt="Dashboard" class="w-full rounded-2xl shadow-2xl shadow-brand-500/20 border border-brand-900/30">
+      </div>
+
+      <div class="mt-12 animate-slide-up" style="animation-delay: 0.4s">
+        <a href="#economia" class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-semibold rounded-xl transition-all hover:shadow-lg hover:shadow-brand-500/25 hover:-translate-y-0.5">
+          Iniciar Masterclass
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01. Economía del Token -->
+  <section id="economia" class="section-hidden py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-black text-lg">01</span>
+        <div>
+          <h2 class="text-3xl md:text-4xl font-black text-white">Economía del Token</h2>
+          <p class="text-gray-400 text-sm">Principios de alta densidad semántica</p>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8 mt-12">
+        <!-- Bad Example -->
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-red-700"></div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-red-400 font-semibold text-sm flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Ineficiente (147 tokens)
+            </span>
+            <span class="text-xs text-red-400/60 bg-red-500/10 px-2 py-1 rounded">-70% rendimiento</span>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed italic">"Por favor, podrías ser tan amable de escribirme un poema bonito y emotivo sobre las flores? Me gustaría que fuera muy tierno, con muchos sentimientos profundos y que rime. Es para un regalo especial para mi novia que le encantan mucho las rosas y las naturalezas. Gracias de antemano por tu ayuda."</p>
+        </div>
+
+        <!-- Good Example -->
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-700"></div>
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-green-400 font-semibold text-sm flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Óptimo (22 tokens)
+            </span>
+            <span class="text-xs text-green-400/60 bg-green-500/10 px-2 py-1 rounded">Densidad máxima</span>
+          </div>
+          <p class="text-white text-sm leading-relaxed font-mono">"Genera poema [tema:rosas] [estructura:AABB] [tono:minimalista] [longitud:4 versos]. Output: JSON{verso,metafora}"</p>
+        </div>
+      </div>
+
+      <!-- Principles Grid -->
+      <div class="grid md:grid-cols-3 gap-6 mt-12">
+        <div class="glass-card rounded-2xl p-6 hover:border-brand-500/30 transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-brand-500/10 flex items-center justify-center mb-4 group-hover:bg-brand-500/20 transition-colors">
+            <svg class="w-6 h-6 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="text-white font-bold mb-2">Directo al Objetivo</h3>
+          <p class="text-gray-400 text-sm">Elimina "por favor", "podrías", "me gustaría". Usa imperativos técnicos: Genera, Crea, Refactoriza.</p>
+        </div>
+        <div class="glass-card rounded-2xl p-6 hover:border-brand-500/30 transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4 group-hover:bg-purple-500/20 transition-colors">
+            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+          </div>
+          <h3 class="text-white font-bold mb-2">Delimitadores XML</h3>
+          <p class="text-gray-400 text-sm">Usa &lt;context&gt;, &lt;task&gt;, &lt;output&gt; para parseo perfecto y cero confusión.</p>
+        </div>
+        <div class="glass-card rounded-2xl p-6 hover:border-brand-500/30 transition-all group">
+          <div class="w-12 h-12 rounded-xl bg-pink-500/10 flex items-center justify-center mb-4 group-hover:bg-pink-500/20 transition-colors">
+            <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+          </div>
+          <h3 class="text-white font-bold mb-2">Chain Density</h3>
+          <p class="text-gray-400 text-sm">Si usas CoT, exige verificación inmediata por paso. No dejes razonamientos flotantes.</p>
+        </div>
+      </div>
+
+      <!-- Token Savings Calculator -->
+      <div class="glass-card rounded-2xl p-8 mt-12">
+        <h3 class="text-xl font-bold text-white mb-6">💰 Calculadora de Ahorro de Tokens</h3>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <label class="text-sm text-gray-400 mb-2 block">Tokens del prompt original</label>
+            <input type="number" id="tokenInput" value="150" class="w-full bg-dark-800 border border-dark-700 rounded-xl px-4 py-3 text-white font-mono focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none transition-all" oninput="calcTokens()">
+            <label class="text-sm text-gray-400 mb-2 block mt-4">Eficiencia del prompt optimizado</label>
+            <input type="range" id="efficiencySlider" min="50" max="95" value="85" class="w-full accent-brand-500" oninput="calcTokens()">
+            <div class="flex justify-between text-xs text-gray-500 mt-1"><span>50%</span><span>95%</span></div>
+          </div>
+          <div class="flex flex-col justify-center">
+            <div class="text-center">
+              <div class="text-4xl font-black text-green-400 font-mono" id="savedTokens">-127</div>
+              <div class="text-sm text-gray-400 mt-1">Tokens ahorrados</div>
+              <div class="text-xs text-gray-500 mt-2">Equivale a <span class="text-brand-400" id="moneySaved">$0.0025</span> en costos API (GPT-4)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02. Anatomía del Prompt Perfecto -->
+  <section id="anatomia" class="section-hidden py-24 px-6 bg-dark-900/30">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-white font-black text-lg">02</span>
+        <div>
+          <h2 class="text-3xl md:text-4xl font-black text-white">Anatomía del Prompt Perfecto</h2>
+          <p class="text-gray-400 text-sm">CTRV: Contexto-Tarea-Restricción-Validación</p>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8 mt-12">
+        <div>
+          <img src="https://image.qwenlm.ai/public_source/85e1c667-d1a7-4470-813b-1388ecc7e287/168c9e44a-214d-48a3-ac0a-14470702a7de.png" alt="Token Network" class="w-full rounded-2xl shadow-xl border border-brand-900/30">
+        </div>
+        <div class="space-y-6">
+          <div class="glass-card rounded-2xl p-6">
+            <h3 class="text-white font-bold mb-3 flex items-center gap-2">
+              <span class="w-8 h-8 rounded-lg bg-brand-500/20 text-brand-400 flex items-center justify-center text-sm font-bold">C</span>
+              Contexto (System)
+            </h3>
+            <div class="code-block rounded-xl p-4">
+              <pre class="text-gray-300"><code>&lt;system_context&gt;
+  Rol: [ESPECIALISTA_TÉCNICO]
+  Stack: [TECNOLOGÍAS]
+  Prioridad: [RENDIMIENTO]
+&lt;/system_context&gt;</code></pre>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl p-6">
+            <h3 class="text-white font-bold mb-3 flex items-center gap-2">
+              <span class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm font-bold">T</span>
+              Tarea (Task)
+            </h3>
+            <div class="code-block rounded-xl p-4">
+              <pre class="text-gray-300"><code>&lt;task&gt;
+  [VERBO_RAÍZ] + [OBJETO] + [FORMATO]
+&lt;/task&gt;</code></pre>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl p-6">
+            <h3 class="text-white font-bold mb-3 flex items-center gap-2">
+              <span class="w-8 h-8 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center text-sm font-bold">R</span>
+              Restricciones
+            </h3>
+            <div class="code-block rounded-xl p-4">
+              <pre class="text-gray-300"><code>&lt;constraints&gt;
+  - Máximo [N] tokens
+  - Sin [ELEMENTOS]
+  - Incluir [REQUISITOS]
+&lt;/constraints&gt;</code></pre>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl p-6">
+            <h3 class="text-white font-bold mb-3 flex items-center gap-2">
+              <span class="w-8 h-8 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center text-sm font-bold">V</span>
+              Validación
+            </h3>
+            <div class="code-block rounded-xl p-4">
+              <pre class="text-gray-300"><code>&lt;validation&gt;
+  [ASSERTS_VERIFICABLES]
+&lt;/validation&gt;</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Few-Shot Comparison -->
+      <div class="mt-12">
+        <h3 class="text-xl font-bold text-white mb-6">Comparativa Few-Shot</h3>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="glass-card rounded-2xl p-6 border-l-4 border-yellow-500">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-yellow-400 font-semibold text-sm">Few-Shot Verboso (312 tokens)</span>
+            </div>
+            <p class="text-gray-400 text-sm leading-relaxed">Ejemplo 1: Entrada: 'El clima está soleado'. Salida esperada: {'sentimiento':'positivo','confianza':0.95}<br><br>Ejemplo 2: Entrada: 'Me siento triste hoy'. Salida esperada: {'sentimiento':'negativo','confianza':0.88}<br><br>Ahora clasifica: 'Estoy eufórico'</p>
+          </div>
+          <div class="glass-card rounded-2xl p-6 border-l-4 border-green-500">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-green-400 font-semibold text-sm">Few-Shot Denso (89 tokens)</span>
+              <span class="text-xs text-green-400/60 bg-green-500/10 px-2 py-1 rounded">-72% tokens</span>
+            </div>
+            <p class="text-gray-300 text-sm leading-relaxed font-mono">Formato: Entrada → JSON{sent,conf}<br>Ej1: 'soleado' → {pos,0.95}<br>Ej2: 'triste' → {neg,0.88}<br>Tarea: 'eufórico' → ?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03. Videcode -->
+  <section id="videcode" class="section-hidden py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-700 flex items-center justify-center text-white font-black text-lg">03</span>
+        <div>
+          <h2 class="text-3xl md:text-4xl font-black text-white">Videcode: Síntesis Multimedia</h2>
+          <p class="text-gray-400 text-sm">Patrones para generación de código funcional sin iteraciones</p>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex gap-2 mb-8 overflow-x-auto pb-2">
+        <button class="code-tab active px-5 py-2 rounded-xl text-sm font-medium transition-all bg-brand-500/20 text-brand-400 border border-brand-500/30" data-tab="video">Video Pipeline</button>
+        <button class="code-tab px-5 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5" data-tab="react">React Hooks</button>
+        <button class="code-tab px-5 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5" data-tab="sql">SQL Quirúrgico</button>
+        <button class="code-tab px-5 py-2 rounded-xl text-sm font-medium transition-all text-gray-400 hover:text-white hover:bg-white/5" data-tab="python">Python</button>
+      </div>
+
+      <div id="tab-video" class="tab-content active">
+        <div class="glass-card rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white font-bold">Pipeline de Video Processing — Python + FFmpeg</h3>
+            <button class="copy-btn px-4 py-2 rounded-lg text-sm text-gray-400 hover:text-white flex items-center gap-2" onclick="copyCode(this)">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              Copiar
+            </button>
+          </div>
+          <div class="code-block rounded-xl p-4 overflow-x-auto">
+            <pre class="text-gray-300"><code><span class="text-purple-400"># @task:</span> Implementar pipeline extracción frames MP4(H.264, 30fps)
+<span class="text-purple-400"># @constraints:</span> OpenCV, memoria máxima 512MB, procesamiento por chunks
+<span class="text-purple-400"># @output:</span> Secuencia PNG numerada sin pérdida
+
+<span class="text-blue-400">import</span> cv2
+<span class="text-blue-400">import</span> numpy <span class="text-blue-400">as</span> np
+
+<span class="text-yellow-400"># Estrategia: Lectura por bloques para videos &gt;4K sin OOM</span>
+<span class="text-blue-400">def</span> <span class="text-green-400">extract_frames_streaming</span>(input_path, output_pattern, fps=<span class="text-orange-400">1</span>):
+    cap = cv2.VideoCapture(input_path)
+    frame_count = <span class="text-orange-400">0</span>
+    <span class="text-blue-400">while</span> cap.isOpened():
+        ret, frame = cap.read()
+        <span class="text-blue-400">if not</span> ret: <span class="text-blue-400">break</span>
+        <span class="text-blue-400">if</span> frame_count % (<span class="text-orange-400">30</span> // fps) == <span class="text-orange-400">0</span>:
+            cv2.imwrite(output_pattern.format(frame_count), frame)
+        frame_count += <span class="text-orange-400">1</span>
+    cap.release()</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-react" class="tab-content">
+        <div class="glass-card rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white font-bold">Zero Bloat JavaScript — React Hook</h3>
+            <button class="copy-btn px-4 py-2 rounded-lg text-sm text-gray-400 hover:text-white flex items-center gap-2" onclick="copyCode(this)">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              Copiar
+            </button>
+          </div>
+          <div class="code-block rounded-xl p-4 overflow-x-auto">
+            <pre class="text-gray-300"><code><span class="text-yellow-400">// @instrucción: custom hook useDebounce con TypeScript.</span>
+<span class="text-yellow-400">// Incluye cancelación. Sin comentarios extra. T=0.1</span>
+
+<span class="text-blue-400">import</span> { useState, useEffect, useRef } <span class="text-blue-400">from</span> <span class="text-green-400">'react'</span>;
+
+<span class="text-blue-400">export function</span> <span class="text-green-400">useDebounce</span>&lt;T&gt;(value: T, delay: <span class="text-blue-400">number</span>): T {
+  <span class="text-blue-400">const</span> [debouncedValue, setDebouncedValue] = useState&lt;T&gt;(value);
+  <span class="text-blue-400">const</span> timerRef = useRef&lt;<span class="text-blue-400">ReturnType</span>&lt;<span class="text-blue-400">typeof</span> setTimeout&gt;&gt;();
+
+  useEffect(() =&gt; {
+    timerRef.current = setTimeout(() =&gt; setDebouncedValue(value), delay);
+    <span class="text-blue-400">return</span> () =&gt; clearTimeout(timerRef.current);
+  }, [value, delay]);
+
+  <span class="text-blue-400">return</span> debouncedValue;
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-sql" class="tab-content">
+        <div class="glass-card rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white font-bold">SQL Quirúrgico — One-liner</h3>
+            <button class="copy-btn px-4 py-2 rounded-lg text-sm text-gray-400 hover:text-white flex items-center gap-2" onclick="copyCode(this)">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              Copiar
+            </button>
+          </div>
+          <div class="code-block rounded-xl p-4 overflow-x-auto">
+            <pre class="text-gray-300"><code><span class="text-yellow-400">-- TOP 5 clientes 2024. Tablas: clientes, pedidos.</span>
+<span class="text-yellow-400">-- Incluye CTE. Solo query. Sin explicación.</span>
+
+<span class="text-blue-400">WITH</span> cliente_gasto <span class="text-blue-400">AS</span> (
+  <span class="text-blue-400">SELECT</span> c.id, c.nombre, <span class="text-blue-400">SUM</span>(p.total) <span class="text-blue-400">AS</span> total_gastado
+  <span class="text-blue-400">FROM</span> clientes c
+  <span class="text-blue-400">JOIN</span> pedidos p <span class="text-blue-400">ON</span> c.id = p.cliente_id
+  <span class="text-blue-400">WHERE</span> p.fecha <span class="text-blue-400">BETWEEN</span> <span class="text-green-400">'2024-01-01'</span> <span class="text-blue-400">AND</span> <span class="text-green-400">'2024-12-31'</span>
+  <span class="text-blue-400">GROUP BY</span> c.id, c.nombre
+)
+<span class="text-blue-400">SELECT</span> * <span class="text-blue-400">FROM</span> cliente_gasto
+<span class="text-blue-400">ORDER BY</span> total_gastado <span class="text-blue-400">DESC</span>
+<span class="text-blue-400">LIMIT</span> <span class="text-orange-400">5</span>;</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-python" class="tab-content">
+        <div class="glass-card rounded-2xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white font-bold">Python — Función Optimizada</h3>
+            <button class="copy-btn px-4 py-2 rounded-lg text-sm text-gray-400 hover:text-white flex items-center gap-2" onclick="copyCode(this)">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              Copiar
+            </button>
+          </div>
+          <div class="code-block rounded-xl p-4 overflow-x-auto">
+            <pre class="text-gray-300"><code><span class="text-yellow-400"># Escribe función fibonacci(n) recursiva con memoización</span>
+<span class="text-yellow-400"># Docstring. Type hints. Sin explicación.</span>
+
+<span class="text-blue-400">def</span> <span class="text-green-400">fibonacci</span>(n: <span class="text-blue-400">int</span>, memo: <span class="text-blue-400">dict</span> = <span class="text-orange-400">None</span>) -&gt; <span class="text-blue-400">int</span>:
+    <span class="text-yellow-400">"""Retorna el n-ésimo número de Fibonacci."""</span>
+    <span class="text-blue-400">if</span> memo <span class="text-blue-400">is None</span>: memo = {}
+    <span class="text-blue-400">if</span> n <span class="text-blue-400">in</span> memo: <span class="text-blue-400">return</span> memo[n]
+    <span class="text-blue-400">if</span> n &lt;= <span class="text-orange-400">2</span>: <span class="text-blue-400">return</span> <span class="text-orange-400">1</span>
+    memo[n] = fibonacci(n-<span class="text-orange-400">1</span>, memo) + fibonacci(n-<span class="text-orange-400">2</span>, memo)
+    <span class="text-blue-400">return</span> memo[n]</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04. Anti-Hallucination -->
+  <section id="anti-hallucination" class="section-hidden py-24 px-6 bg-dark-900/30">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-black text-lg">04</span>
+        <div>
+          <h2 class="text-3xl md:text-4xl font-black text-white">Sistema Anti-Hallucination</h2>
+          <p class="text-gray-400 text-sm">Restricciones negativas precisas. Forzar honestidad.</p>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8 mt-12">
+        <div>
+          <img src="https://image.qwenlm.ai/public_source/85e1c667-d1a7-4470-813b-1388ecc7e287/1f083906c-dabc-435b-8890-bc1e48b3cf2d.png" alt="Anti-Hallucination" class="w-full rounded-2xl shadow-xl border border-red-900/30">
+        </div>
+        <div>
+          <div class="glass-card rounded-2xl p-6 mb-6">
+            <h3 class="text-white font-bold mb-4 flex items-center gap-2">
+              <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              Template Base Seguro
+            </h3>
+            <div class="code-block rounded-xl p-4">
+              <pre class="text-gray-300"><code><span class="text-red-400">### CONTEXTO ###</span>
+{datos_verificados | fuente: [URL/API] | fecha_corte: [YYYY-MM-DD]}
+
+<span class="text-red-400">### RESTRICCIONES ###</span>
+NO inventes estadísticas ni fuentes
+NO uses información posterior a 2023 si no se verifica
+Si dato ausente → responde exactamente <span class="text-green-400">'null'</span>, no guessing
+Confianza &lt; 0.95 → declarar incertidumbre
+
+<span class="text-red-400">### TAREA ###</span>
+Extrae: [campos_requeridos]
+Formato: JSON estricto, sin markdown fences</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Safety Features -->
+      <div class="grid md:grid-cols-3 gap-6 mt-12">
+        <div class="glass-card rounded-2xl p-6 text-center">
+          <div class="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+          </div>
+          <h3 class="text-white font-bold mb-2">Chain of Verification</h3>
+          <p class="text-gray-400 text-sm">Separar razonamiento en &lt;thinking&gt; y respuesta final en &lt;output&gt;</p>
+        </div>
+        <div class="glass-card rounded-2xl p-6 text-center">
+          <div class="w-14 h-14 rounded-2xl bg-yellow-500/10 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          </div>
+          <h3 class="text-white font-bold mb-2">Step Refusal</h3>
+          <p class="text-gray-400 text-sm">"Si no estás seguro al 95% → 'No tengo certeza suficiente'"</p>
+        </div>
+        <div class="glass-card rounded-2xl p-6 text-center">
+          <div class="w-14 h-14 rounded-2xl bg-green-500/10 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <h3 class="text-white font-bold mb-2">Data Boundaries</h3>
+          <p class="text-gray-400 text-sm">Fecha de corte explícita + fuente verificada + null por defecto</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05. Templates -->
+  <section id="templates" class="section-hidden py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white font-black text-lg">05</span>
+        <div>
+          <h2 class="text-3xl md:text-4xl font-black text-white">Templates Copia-Pega</h2>
+          <p class="text-gray-400 text-sm">Arquitecturas pre-certificadas para máximo rendimiento</p>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-6 mt-12">
+        <!-- Template 1: Copywriting -->
+        <div class="glass-card rounded-2xl p-6 prompt-card">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white font-bold flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+              Copywriting Direct-Response
+            </h3>
+            <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyCode(this)">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              Copiar
+            </button>
+          </div>
+          <div class="code-block rounded-xl p-4">
+            <pre class="text-gray-300 text-xs"><code>Eres copywriter DR para [SECTOR].
+Producto: [PRODUCTO] ($[PRECIO])
+Audiencia: [AVATAR_ESPECÍFICO]
+Genera:
+### HEADLINE
+Máx 8 palabras, beneficio principal
+### 3 BULLETS
+Formato: "Beneficio → Mecanismo"
+### CTA
+1ª persona, verbo acción
+Restricciones:
+- Sin adjetivos vacíos
+- Sin emoji en headline
+- Longitud total &lt; 120 palabras</code></pre>
+          </div>
+        </div>
+
+        <!-- Template 2: Code Architecture -->
+        <div class="glass-card rounded-2xl p-6 prompt-card">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white font-bold flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+              Arquitectura de Código
+            </h3>
+            <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyCode(this)">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              Copiar
+            </button>
+          </div>
+          <div class="code-block rounded-xl p-4">
+            <pre class="text-gray-300 text-xs"><code>Lenguaje: [LENGUAJE] | Framework: [STACK]
+Versión: [SEMVER] | Entorno: [RUNTIME]
+Crea: [COMPONENTE/FUNCIÓN]
+Especificaciones:
+- Input: [TIPO] | Output: [TIPO]
+- Edge cases: [LISTA]
+- Error handling: [ESTRATEGIA]
+Reglas:
+- Sin console.log
+- Comentarios solo lógica no obvia
+- Tipado estricto
+- Output SOLO código, sin explicación</code></pre>
+          </div>
+        </div>
+
+        <!-- Template 3: Code Review -->
+        <div class="glass-card rounded-2xl p-6 prompt-card">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white font-bold flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-green-400"></span>
+              T-01: Code Review
+            </h3>
+            <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyCode(this)">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              Copiar
+            </button>
+          </div>
+          <div class="code-block rounded-xl p-4">
+            <pre class="text-gray-300 text-xs"><code>Eres: senior dev especialista en [LENGUAJE/FRAMEWORK].
+
+Código a revisar: `[CÓDIGO]`
+
+Revisa en este orden:
+1. Bugs potenciales o race conditions
+2. Security issues (injection, auth, etc.)
+3. Performance (O(n²) o peor, I/O innecesario)
+4. Legibilidad (naming, complejidad ciclomática)
+
+Formato por cada issue:
+- Línea: [número]
+- Severidad: [CRÍTICO | ADVERTENCIA | ESTILO]
+- Problema: [1 línea]
+- Fix sugerido: [código mínimo]
+
+Si no hay issues: escribe "✓ OK".</code></pre>
+          </div>
+        </div>
+
+        <!-- Template 4: System Prompt Maestro -->
+        <div class="glass-card rounded-2xl p-6 prompt-card">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white font-bold flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+              T-05: System Prompt Maestro
+            </h3>
+            <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyCode(this)">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              Copiar
+            </button>
+          </div>
+          <div class="code-block rounded-xl p-4">
+            <pre class="text-gray-300 text-xs"><code>Rol: {ROL_ESPECÍFICO_CON_EXPERIENCIA}
+Contexto: {EN_QUÉ_SITUACIÓN_OPERAS}
+
+Comportamiento obligatorio:
+- Siempre responder en {IDIOMA}
+- Nunca incluir saludo ni despedida
+- Siempre preguntar datos faltantes antes de actuar
+- Si hay ambigüedad, pedir aclaración (no suponer)
+- Formato por defecto: {FORMATO}
+
+Prohibido:
+- {PROHIBICIÓN_1}
+- {PROHIBICIÓN_2}
+
+Prioridad de respuestas:
+1. Precisión sobre velocidad
+2. Datos sobre opiniones
+3. Simple sobre complejo</code></pre>
+          </div>
+        </div>
+
+        <!-- Template 5: Meta-Prompt -->
+        <div class="glass-card rounded-2xl p-6 prompt-card">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white font-bold flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-pink-400"></span>
+              T-06: Meta-Prompt
+            </h3>
+            <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyCode(this)">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              Copiar
+            </button>
+          </div>
+          <div class="code-block rounded-xl p-4">
+            <pre class="text-gray-300 text-xs"><code>Eres experto en prompt engineering. Tu tarea: 
+reescribir el prompt entre ### para maximizar 
+calidad de respuesta y minimizar tokens.
+
+Aplica estas reglas al reescribir:
+1. Eliminar todo preámbulo y cortesía
+2. Añadir formato de salida exacto
+3. Añadir restricciones (longitud, estilo, qué NO hacer)
+4. Usar delimitadores para separar datos
+5. Poner la instrucción principal primero
+6. Si beneficia, añadir 1-2 ejemplos few-shot
+
+Output: SOLO el prompt reescrito, sin explicación.
+
+###
+{PROMPT_A_MEJORAR}
+###</code></pre>
+          </div>
+        </div>
+
+        <!-- Template 6: Prompt Optimizer Generator -->
+        <div class="glass-card rounded-2xl p-6 prompt-card">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-white font-bold flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+              Generador de Prompts Óptimos
+            </h3>
+          </div>
+          <div class="space-y-3">
+            <input type="text" id="objInput" placeholder="Objetivo Principal (Qué)" class="w-full bg-dark-800 border border-dark-700 rounded-xl px-4 py-3 text-sm text-white focus:border-brand-500 outline-none transition-all">
+            <input type="text" id="stackInput" placeholder="Stack Tecnológico (Cómo)" class="w-full bg-dark-800 border border-dark-700 rounded-xl px-4 py-3 text-sm text-white focus:border-brand-500 outline-none transition-all">
+            <input type="text" id="restInput" placeholder="Restricciones Críticas (Límites)" class="w-full bg-dark-800 border border-dark-700 rounded-xl px-4 py-3 text-sm text-white focus:border-brand-500 outline-none transition-all">
+            <button onclick="generatePrompt()" class="w-full py-3 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-semibold rounded-xl transition-all text-sm">
+              Generar Prompt Óptimo
+            </button>
+            <div id="generatedPrompt" class="hidden code-block rounded-xl p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-green-400 font-semibold">Prompt Generado</span>
+                <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white" onclick="copyCode(this)">Copiar</button>
+              </div>
+              <pre id="promptOutput" class="text-gray-300 text-xs whitespace-pre-wrap"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06. Portfolio Forge -->
+  <section id="portfolio" class="section-hidden py-24 px-6 bg-dark-900/30">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white font-black text-lg">06</span>
+        <div>
+          <h2 class="text-3xl md:text-4xl font-black text-white">Portfolio Forge Architect</h2>
+          <p class="text-gray-400 text-sm">Visualización técnica del sistema PortfolioForge</p>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8 mt-12">
+        <div>
+          <img src="https://image.qwenlm.ai/public_source/85e1c667-d1a7-4470-813b-1388ecc7e287/1c8fa6b63-dbf9-4716-a456-bf1aed4478d7.png" alt="Portfolio Forge" class="w-full rounded-2xl shadow-xl border border-emerald-900/30">
+        </div>
+        <div class="space-y-6">
+          <div class="glass-card rounded-2xl p-6">
+            <h3 class="text-white font-bold mb-4">🏗️ Stack Moderno</h3>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-dark-800 rounded-xl p-3">
+                <div class="text-xs text-brand-400 font-semibold">Frontend</div>
+                <div class="text-xs text-gray-400 mt-1">React 18+ + TypeScript + Vite + Tailwind</div>
+              </div>
+              <div class="bg-dark-800 rounded-xl p-3">
+                <div class="text-xs text-purple-400 font-semibold">State</div>
+                <div class="text-xs text-gray-400 mt-1">Zustand (global) + React Query</div>
+              </div>
+              <div class="bg-dark-800 rounded-xl p-3">
+                <div class="text-xs text-green-400 font-semibold">Backend</div>
+                <div class="text-xs text-gray-400 mt-1">Firebase/Supabase (Auth + Firestore)</div>
+              </div>
+              <div class="bg-dark-800 rounded-xl p-3">
+                <div class="text-xs text-amber-400 font-semibold">Export</div>
+                <div class="text-xs text-gray-400 mt-1">html2canvas + jsPDF + Sharp</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="glass-card rounded-2xl p-4 text-center">
+              <div class="text-2xl font-black gradient-text">React 18</div>
+              <div class="text-xs text-gray-500 mt-1">Concurrent Features</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 text-center">
+              <div class="text-2xl font-black gradient-text">4K</div>
+              <div class="text-xs text-gray-500 mt-1">Export Resolution</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 text-center">
+              <div class="text-2xl font-black gradient-text">&lt;2s</div>
+              <div class="text-xs text-gray-500 mt-1">Time to Interactive</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 text-center">
+              <div class="text-2xl font-black gradient-text">5</div>
+              <div class="text-xs text-gray-500 mt-1">Idiomas (ES/EN/FR/DE/PT)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Features -->
+      <div class="grid md:grid-cols-3 gap-6 mt-12">
+        <div class="glass-card rounded-2xl p-6">
+          <div class="text-2xl mb-3">🎨</div>
+          <h3 class="text-white font-bold mb-2">Editor Visual</h3>
+          <ul class="text-gray-400 text-sm space-y-1">
+            <li>• Canvas WYSIWYG con grid snapping</li>
+            <li>• Breakpoints: Desktop/Tablet/Mobile</li>
+            <li>• Undo/Redo + Time-machine versions</li>
+            <li>• Auto-guardado 5s (IndexedDB)</li>
+          </ul>
+        </div>
+        <div class="glass-card rounded-2xl p-6">
+          <div class="text-2xl mb-3">🎯</div>
+          <h3 class="text-white font-bold mb-2">Smart Features</h3>
+          <ul class="text-gray-400 text-sm space-y-1">
+            <li>• Import LinkedIn/GitHub API</li>
+            <li>• AI Content Assistant</li>
+            <li>• ATS Optimization Scanner</li>
+            <li>• Multi-idioma</li>
+          </ul>
+        </div>
+        <div class="glass-card rounded-2xl p-6">
+          <div class="text-2xl mb-3">📤</div>
+          <h3 class="text-white font-bold mb-2">Exportación</h3>
+          <ul class="text-gray-400 text-sm space-y-1">
+            <li>• PDF Vector (CMYK ready)</li>
+            <li>• PNG 4K Transparente</li>
+            <li>• URL Pública temporal</li>
+            <li>• Batch Export</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07. Android Prompts -->
+  <section id="android" class="section-hidden py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white font-black text-lg">07</span>
+        <div>
+          <h2 class="text-3xl md:text-4xl font-black text-white">Android Architect Prompts</h2>
+          <p class="text-gray-400 text-sm">20 prompts de nivel arquitecto senior — Apps compilables sin Android Studio</p>
+        </div>
+      </div>
+
+      <!-- Hero Image -->
+      <div class="mt-8 mb-8">
+        <img src="https://image.qwenlm.ai/public_source/85e1c667-d1a7-4470-813b-1388ecc7e287/18bcbd242-df0a-4501-bb71-c2f958c75385.png" alt="Android Development" class="w-full max-w-3xl mx-auto rounded-2xl shadow-xl border border-green-900/30">
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+        <div class="glass-card rounded-2xl p-4 text-center">
+          <div class="text-2xl font-black text-green-400">20</div>
+          <div class="text-xs text-gray-500 mt-1">Prompts Expertos</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center">
+          <div class="text-2xl font-black text-green-400">15+</div>
+          <div class="text-xs text-gray-500 mt-1">Categorías</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center">
+          <div class="text-2xl font-black text-green-400">0</div>
+          <div class="text-xs text-gray-500 mt-1">Android Studio</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center">
+          <div class="text-2xl font-black text-green-400">100%</div>
+          <div class="text-xs text-gray-500 mt-1">Compilable</div>
+        </div>
+      </div>
+
+      <!-- Tech Stack -->
+      <div class="flex flex-wrap gap-3 mb-8 justify-center">
+        <span class="px-4 py-2 glass rounded-full text-xs text-green-400 font-semibold">Kotlin</span>
+        <span class="px-4 py-2 glass rounded-full text-xs text-green-400 font-semibold">Jetpack Compose</span>
+        <span class="px-4 py-2 glass rounded-full text-xs text-green-400 font-semibold">MVVM</span>
+        <span class="px-4 py-2 glass rounded-full text-xs text-green-400 font-semibold">Clean Architecture</span>
+        <span class="px-4 py-2 glass rounded-full text-xs text-green-400 font-semibold">Room DB</span>
+        <span class="px-4 py-2 glass rounded-full text-xs text-green-400 font-semibold">Hilt</span>
+        <span class="px-4 py-2 glass rounded-full text-xs text-green-400 font-semibold">Coroutines</span>
+      </div>
+
+      <!-- Search & Filter -->
+      <div class="flex flex-col md:flex-row gap-4 mb-8">
+        <div class="relative flex-1">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="promptSearch" placeholder="Buscar prompts..." class="w-full glass rounded-xl pl-12 pr-4 py-3 text-sm text-white focus:border-green-500 outline-none transition-all" oninput="filterPrompts()">
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="flex flex-wrap gap-2 mb-8" id="categoryFilters">
+        <button class="category-badge active px-4 py-2 rounded-full text-xs font-semibold glass" data-category="all" onclick="filterByCategory(this)">🎯 Todos</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="ecommerce" onclick="filterByCategory(this)">🛒 E-Commerce</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="social" onclick="filterByCategory(this)">💬 Social</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="salud" onclick="filterByCategory(this)">💚 Salud</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="finanzas" onclick="filterByCategory(this)">💰 Finanzas</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="educacion" onclick="filterByCategory(this)">📚 Educación</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="comida" onclick="filterByCategory(this)">🍔 Comida</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="viajes" onclick="filterByCategory(this)">✈️ Viajes</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="musica" onclick="filterByCategory(this)">🎵 Música</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="noticias" onclick="filterByCategory(this)">📰 Noticias</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="productividad" onclick="filterByCategory(this)">⚡ Productividad</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="gaming" onclick="filterByCategory(this)">🎮 Gaming</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="clima" onclick="filterByCategory(this)">🌤️ Clima</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="fotografia" onclick="filterByCategory(this)">📷 Fotografía</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="chat" onclick="filterByCategory(this)">💬 Chat</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="meditacion" onclick="filterByCategory(this)">🧘 Meditación</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="streaming" onclick="filterByCategory(this)">🎬 Streaming</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="navegacion" onclick="filterByCategory(this)">🗺️ Navegación</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="calendario" onclick="filterByCategory(this)">📅 Calendario</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="marketplace" onclick="filterByCategory(this)">🏪 Marketplace</button>
+        <button class="category-badge px-4 py-2 rounded-full text-xs font-semibold glass text-gray-400" data-category="habitos" onclick="filterByCategory(this)">🎯 Hábitos</button>
+      </div>
+
+      <!-- Prompt Cards -->
+      <div class="grid md:grid-cols-2 gap-6" id="promptGrid">
+        <!-- Card 1: E-Commerce -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="ecommerce" data-name="tienda online e-commerce">
+          <div class="h-2 bg-gradient-to-r from-blue-500 to-blue-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-lg">🛒</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Tienda Online Premium</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded">Room DB</span>
+                    <span class="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">Retrofit</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 1)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Genera una aplicación Android completa de e-commerce usando Kotlin con Jetpack Compose como UI framework. Arquitectura MVVM con Clean Architecture. Incluye: pantalla de inicio con carrusel de productos destacados, categorías con iconos, lista de productos con filtros y búsqueda, detalle de producto con galería de imágenes y selector de variantes, carrito de compras persistente con Room Database, checkout con formulario de dirección y selección de método de pago, sistema de autenticación con email y Google Sign-In, perfil de usuario con historial de pedidos. Implementa navegación con Navigation Compose, gestión de estado con StateFlow, inyección de dependencias con Hilt. La app debe compilar directamente generando un APK sin necesidad de Android Studio.</p>
+          </div>
+        </div>
+
+        <!-- Card 2: Social -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="social" data-name="red social feed">
+          <div class="h-2 bg-gradient-to-r from-pink-500 to-pink-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center text-lg">💬</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Red Social con Feed</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded">Firebase</span>
+                    <span class="text-[10px] text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded">CameraX</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 2)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Crea una aplicación de red social Android con Kotlin y Jetpack Compose. Arquitectura MVVM + Repositorio. Funcionalidades: feed infinito con paginación (Paging 3), crear publicaciones con texto e imágenes (CameraX para captura y galería para selección), stories temporales de 24 horas, sistema de likes y comentarios en tiempo real con Firestore, perfiles de usuario con foto, bio y estadísticas, notificaciones push con Firebase Cloud Messaging, búsqueda de usuarios, sistema de seguidores/siguiendo, chat directo entre usuarios. UI moderna con Material 3 Design, tema claro y oscuro.</p>
+          </div>
+        </div>
+
+        <!-- Card 3: Salud -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="salud" data-name="fitness salud tracker">
+          <div class="h-2 bg-gradient-to-r from-green-500 to-emerald-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center text-lg">💚</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Fitness & Salud Tracker</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded">Health Connect</span>
+                    <span class="text-[10px] text-red-400 bg-red-500/10 px-2 py-0.5 rounded">MPAndroidChart</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 3)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Desarrolla una aplicación de salud y fitness con Kotlin y Jetpack Compose. Arquitectura MVI con Clean Architecture. Dashboard principal con métricas de salud (pasos, calorías, distancia, ritmo cardíaco) usando Health Connect API, registro de entrenamientos con cronómetro, gráficos de progreso semanal/mensual/anual con MPAndroidChart, plan de entrenamiento personalizado, registro de peso y medidas, integración con sensores del dispositivo, recordatorios de hidratación y medicación.</p>
+          </div>
+        </div>
+
+        <!-- Card 4: Educación -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="educacion" data-name="plataforma e-learning">
+          <div class="h-2 bg-gradient-to-r from-indigo-500 to-indigo-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-lg">📚</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Plataforma E-Learning</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-red-400 bg-red-500/10 px-2 py-0.5 rounded">ExoPlayer</span>
+                    <span class="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded">Room</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 4)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Construye una plataforma de e-learning Android con Kotlin y Jetpack Compose. Arquitectura MVVM + Use Cases. Catálogo de cursos con categorías y búsqueda, vista detallada del curso con contenido del programa, reproductor de video integrado con ExoPlayer (soporte offline), progreso del curso con marcadores, quizzes interactivos, sistema de certificados, favoritos y curso actual en progreso, modo oscuro, perfil con estadísticas.</p>
+          </div>
+        </div>
+
+        <!-- Card 5: Finanzas -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="finanzas" data-name="banca digital finanzas">
+          <div class="h-2 bg-gradient-to-r from-yellow-500 to-yellow-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center text-lg">💰</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Banca Digital & Finanzas</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">Biometric</span>
+                    <span class="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded">Room</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 5)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Desarrolla una aplicación bancaria digital con Kotlin y Jetpack Compose. Arquitectura MVVM + Clean Architecture. Pantalla de inicio con balance total y tarjetas visuales, transacciones recientes con categorías y filtros, transferencias entre cuentas con validación, pagos de servicios, gráficos de gastos por categoría, presupuesto mensual con alertas, autenticación biométrica (huella/rostro) y PIN, notificaciones de transacciones.</p>
+          </div>
+        </div>
+
+        <!-- Card 6: Comida -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="comida" data-name="delivery comida restaurante">
+          <div class="h-2 bg-gradient-to-r from-orange-500 to-orange-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center text-lg">🍔</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Delivery de Comida</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-blue-300 bg-blue-300/10 px-2 py-0.5 rounded">Google Maps</span>
+                    <span class="text-[10px] text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded">Firebase</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 6)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Crea una app de delivery de comida con Kotlin y Jetpack Compose. Arquitectura MVVM + Repositorios. Pantalla principal con restaurantes cercanos, búsqueda y filtros por tipo de cocina y precio, menú del restaurante con personalizaciones de platos, carrito con resumen y cálculo de envío, seguimiento del pedido en tiempo real con mapa de Google Maps SDK, sistema de calificaciones y reseñas, historial de pedidos con reordenar rápido.</p>
+          </div>
+        </div>
+
+        <!-- Card 7: Viajes -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="viajes" data-name="booking viajes vuelos hoteles">
+          <div class="h-2 bg-gradient-to-r from-cyan-500 to-cyan-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center text-lg">✈️</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Booking de Viajes</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">Retrofit</span>
+                    <span class="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded">Coroutines</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 7)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Genera una aplicación de reservas de viajes con Kotlin y Jetpack Compose. Arquitectura Clean Architecture + MVVM. Búsqueda de vuelos con filtros (fechas, aerolínea, escalas), búsqueda de hoteles con mapa interactivo, detalles del destino con galería y descripción, comparador de precios, favoritos para guardar búsquedas, historial de reservas, gestión de itinerarios por viaje, notificaciones de cambios de vuelo, conversión de moneda, checklist de viaje.</p>
+          </div>
+        </div>
+
+        <!-- Card 8: Música -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="musica" data-name="streaming música reproductor">
+          <div class="h-2 bg-gradient-to-r from-violet-500 to-violet-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center text-lg">🎵</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Streaming de Música</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded">Media3</span>
+                    <span class="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded">Room</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 8)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Desarrolla un reproductor de música con Kotlin y Jetpack Compose. Arquitectura MVVM + Media Service. Biblioteca musical que escanea archivos locales, reproductor con controles completos, cola de reproducción arrastrable, playlists personalizables, ecualizador visual animado sincronizado con la música, búsqueda por artista, álbum y canción, pantalla de reproducción a pantalla completa, mini-player persistente, MediaSession para controles de notification.</p>
+          </div>
+        </div>
+
+        <!-- Card 9: Noticias -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="noticias" data-name="agregador noticias rss">
+          <div class="h-2 bg-gradient-to-r from-red-500 to-red-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center text-lg">📰</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Agregador de Noticias</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">Retrofit</span>
+                    <span class="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded">WorkManager</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 9)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Crea un agregador de noticias con Kotlin y Jetpack Compose. Feed de noticias con scroll infinito y paginación, categorías personalizables, búsqueda de artículos con autocompletado, modo lectura sin distracciones, guardar artículos para leer después, compartir artículos, notificaciones de breaking news con WorkManager para sync en background, modo oscuro, preferencias de fuentes de noticias.</p>
+          </div>
+        </div>
+
+        <!-- Card 10: Productividad -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="productividad" data-name="gestor tareas kanban pomodoro">
+          <div class="h-2 bg-gradient-to-r from-teal-500 to-teal-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-teal-500/20 flex items-center justify-center text-lg">⚡</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Gestor de Tareas Pro</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded">Room</span>
+                    <span class="text-[10px] text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded">WorkManager</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 10)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Construye un gestor de tareas profesional con Kotlin y Jetpack Compose. Arquitectura MVI + Clean Architecture. Vista Kanban con columnas arrastrables, lista de tareas con prioridades y fechas límite, etiquetas y colores personalizables, subtareas y checklists, recordatorios con notificaciones locales, búsqueda y filtros avanzados, estadísticas de productividad semanal, modo enfoque con temporizador Pomodoro integrado.</p>
+          </div>
+        </div>
+
+        <!-- Card 11: Gaming -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="gaming" data-name="hub juegos snake tictactoe memoria">
+          <div class="h-2 bg-gradient-to-r from-lime-500 to-lime-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-lime-500/20 flex items-center justify-center text-lg">🎮</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Hub de Juegos</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-lime-400 bg-lime-500/10 px-2 py-0.5 rounded">Canvas</span>
+                    <span class="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded">Coroutines</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 11)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Desarrolla un hub de juegos con Kotlin y Jetpack Compose. Incluye 3 juegos mini integrados usando Canvas API: Snake clásico con controles táctiles, Tic-Tac-Toe con IA básica, y un juego de memoria con cartas. Pantalla principal con selector de juegos, tabla de puntuaciones con Room Database, perfil de jugador con estadísticas, logros y medallas, modo oscuro con estética gaming (colores neón).</p>
+          </div>
+        </div>
+
+        <!-- Card 12: Clima -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="clima" data-name="app clima pronóstico weather">
+          <div class="h-2 bg-gradient-to-r from-sky-500 to-sky-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-sky-500/20 flex items-center justify-center text-lg">🌤️</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">App del Clima</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">Location</span>
+                    <span class="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">Retrofit</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 12)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Crea una aplicación del clima con Kotlin y Jetpack Compose. Clima actual con temperatura, humedad, viento y sensación térmica, pronóstico de 7 días con iconos animados, pronóstico por horas con gráfico de temperatura, mapa de radar con precipitaciones, múltiples ciudades guardadas, detección de ubicación automática, alertas meteorológicas con notificaciones push, fondo dinámico según condiciones climáticas.</p>
+          </div>
+        </div>
+
+        <!-- Card 13: Fotografía -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="fotografia" data-name="editor fotos cámara filter">
+          <div class="h-2 bg-gradient-to-r from-rose-500 to-rose-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-rose-500/20 flex items-center justify-center text-lg">📷</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Editor de Fotos</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded">CameraX</span>
+                    <span class="text-[10px] text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded">Bitmap</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 13)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Desarrolla un editor de fotos con Kotlin y Jetpack Compose. Captura de fotos con CameraX con modo pro (ISO, exposición, enfoque manual), galería de fotos del dispositivo, editor con filtros predefinidos (brillo, contraste, saturación, sepia, B&N), recorte y rotación de imágenes, ajuste de brillo y contraste con sliders, agregar texto y stickers a fotos, compartir imágenes.</p>
+          </div>
+        </div>
+
+        <!-- Card 14: Chat -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="chat" data-name="mensajería instantánea chat realtime">
+          <div class="h-2 bg-gradient-to-r from-emerald-500 to-emerald-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-lg">💬</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Mensajería Instantánea</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">WebSocket</span>
+                    <span class="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded">Room</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 14)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Crea una app de mensajería instantánea con Kotlin y Jetpack Compose. Lista de conversaciones con último mensaje y hora, chat individual con burbujas de mensajes, mensajes de texto, emojis, imágenes y notas de voz, indicador de escritura en tiempo real, doble check de leído, búsqueda de conversaciones, contactos, notificaciones push, historial persistente con Room, grupos de chat. Conexión WebSocket para mensajería en tiempo real.</p>
+          </div>
+        </div>
+
+        <!-- Card 15: Meditación -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="meditacion" data-name="meditación bienestar mindfulness">
+          <div class="h-2 bg-gradient-to-r from-fuchsia-500 to-fuchsia-700"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-fuchsia-500/20 flex items-center justify-center text-lg">🧘</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">App de Meditación</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-fuchsia-400 bg-fuchsia-500/10 px-2 py-0.5 rounded">MediaPlayer</span>
+                    <span class="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded">Room</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 15)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Desarrolla una aplicación de meditación y bienestar con Kotlin y Jetpack Compose. Sesiones guiadas de meditación con temporizador configurable, sonidos ambientales (lluvia, bosque, océano, fuego) con mezcla de audio, ejercicios de respiración con animación visual de círculo expansivo, seguimiento de racha diaria con calendario de práctica, estadísticas de meditación, modo nocturno con colores relajantes, diario de bienestar.</p>
+          </div>
+        </div>
+
+        <!-- Card 16: Streaming -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="streaming" data-name="plataforma video streaming películas">
+          <div class="h-2 bg-gradient-to-r from-red-600 to-red-800"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-red-600/20 flex items-center justify-center text-lg">🎬</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Plataforma de Video</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-red-400 bg-red-500/10 px-2 py-0.5 rounded">ExoPlayer</span>
+                    <span class="text-[10px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">Hilt</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 16)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Construye una plataforma de streaming de video con Kotlin y Jetpack Compose. Catálogo de contenido con categorías (películas, series, documentales), búsqueda con filtros, detalle de contenido con sinopsis, elenco, episodios, reproductor de video con ExoPlayer (controles personalizados, calidad, subtítulos, picture-in-picture), mi lista de watchlist, continuar viendo con progreso guardado, recomendaciones basadas en género.</p>
+          </div>
+        </div>
+
+        <!-- Card 17: Navegación -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="navegacion" data-name="gps navegación mapa rutas">
+          <div class="h-2 bg-gradient-to-r from-blue-600 to-blue-800"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-blue-600/20 flex items-center justify-center text-lg">🗺️</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">GPS & Navegación</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-blue-300 bg-blue-300/10 px-2 py-0.5 rounded">Google Maps</span>
+                    <span class="text-[10px] text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">Location</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 17)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Crea una app de navegación GPS con Kotlin y Jetpack Compose. Mapa interactivo con Google Maps SDK, búsqueda de destinos con autocompletado de lugares, cálculo de ruta con distancia y tiempo estimado, navegación turn-by-turn con instrucciones de voz, modo coche y modo peatón, guardar ubicaciones favoritas, historial de búsquedas, tráfico en tiempo real con colores en la ruta, compartir ubicación en tiempo real.</p>
+          </div>
+        </div>
+
+        <!-- Card 18: Calendario -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="calendario" data-name="calendario eventos agenda">
+          <div class="h-2 bg-gradient-to-r from-orange-600 to-orange-800"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-orange-600/20 flex items-center justify-center text-lg">📅</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Calendario Inteligente</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded">Room</span>
+                    <span class="text-[10px] text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded">WorkManager</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 18)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Desarrolla un calendario inteligente con Kotlin y Jetpack Compose. Vista mensual, semanal y diaria del calendario, crear eventos con título, descripción, ubicación, hora y color, recordatorios con notificaciones locales, categorías de eventos con colores personalizables, integración con calendario del sistema Android, búsqueda de eventos, eventos recurrentes, sincronización con Google Calendar API, vista de agenda con timeline.</p>
+          </div>
+        </div>
+
+        <!-- Card 19: Marketplace -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="marketplace" data-name="marketplace p2p venta compra">
+          <div class="h-2 bg-gradient-to-r from-yellow-600 to-yellow-800"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-yellow-600/20 flex items-center justify-center text-lg">🏪</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Marketplace P2P</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded">CameraX</span>
+                    <span class="text-[10px] text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded">Firebase</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 19)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Construye un marketplace peer-to-peer con Kotlin y Jetpack Compose. Feed de productos con grid y lista, publicar producto con fotos (CameraX), título, descripción, precio y categoría, búsqueda y filtros avanzados por categoría, precio y ubicación, perfil de vendedor con productos y calificaciones, chat entre comprador y vendedor, sistema de favoritos, notificaciones de mensajes y ofertas, gestión de mis publicaciones.</p>
+          </div>
+        </div>
+
+        <!-- Card 20: Hábitos -->
+        <div class="prompt-card glass-card rounded-2xl overflow-hidden" data-category="habitos" data-name="tracker hábitos racha streak">
+          <div class="h-2 bg-gradient-to-r from-purple-600 to-purple-800"></div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-purple-600/20 flex items-center justify-center text-lg">🎯</span>
+                <div>
+                  <h3 class="text-white font-bold text-sm">Tracker de Hábitos</h3>
+                  <div class="flex gap-1.5 mt-1">
+                    <span class="text-[10px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">Kotlin</span>
+                    <span class="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">Compose</span>
+                    <span class="text-[10px] text-green-400 bg-green-500/10 px-2 py-0.5 rounded">Room</span>
+                    <span class="text-[10px] text-purple-300 bg-purple-300/10 px-2 py-0.5 rounded">DataStore</span>
+                  </div>
+                </div>
+              </div>
+              <button class="copy-btn px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:text-white flex items-center gap-1" onclick="copyAndroidPrompt(this, 20)">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Copiar
+              </button>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-4">Desarrolla un tracker de hábitos con Kotlin y Jetpack Compose. Crear hábitos personalizados con icono, color y frecuencia, check-in diario con animación de celebración, racha actual y mejor racha por hábito, vista mensual tipo heatmap (estilo GitHub contributions), estadísticas y gráficos de cumplimiento, categorías de hábitos, recordatorios configurables, frases motivacionales diarias, diseño gamificado con logros.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div id="noResults" class="hidden text-center py-12">
+        <svg class="w-16 h-16 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <h3 class="text-white font-bold mb-2">No se encontraron resultados</h3>
+        <p class="text-gray-500 text-sm">Intenta con otra búsqueda o categoría</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08. Checklist -->
+  <section id="checklist" class="section-hidden py-24 px-6 bg-dark-900/30">
+    <div class="max-w-4xl mx-auto">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white font-black text-lg">08</span>
+        <div>
+          <h2 class="text-3xl md:text-4xl font-black text-white">Checklist Pre-Envío</h2>
+          <p class="text-gray-400 text-sm">Verificación de 8 puntos críticos antes de enviar cualquier prompt</p>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8 mt-12">
+        <div>
+          <img src="https://image.qwenlm.ai/public_source/85e1c667-d1a7-4470-813b-1388ecc7e287/1579ef84b-4a5c-4b94-b1d0-ed6b6fb58e91.png" alt="Checklist" class="w-full rounded-2xl shadow-xl border border-green-900/30 mb-6">
+
+          <div class="glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-white font-bold">Puntuación del Prompt</h3>
+              <span id="checklistScore" class="text-2xl font-black gradient-text">0/8</span>
+            </div>
+            <div class="w-full h-3 bg-dark-800 rounded-full overflow-hidden mb-4">
+              <div id="checklistProgress" class="h-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <p id="checklistMsg" class="text-xs text-gray-500">Marca los checkpoints para evaluar tu prompt</p>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <label class="checklist-item glass-card rounded-xl p-4 flex items-start gap-4 cursor-pointer hover:border-green-500/30 transition-all group">
+            <input type="checkbox" class="hidden checklist-check" onchange="updateChecklist()">
+            <div class="w-6 h-6 rounded-lg border-2 border-gray-600 group-hover:border-brand-500 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all check-box">
+              <svg class="w-4 h-4 text-green-400 opacity-0 transition-opacity check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <span class="text-white text-sm font-semibold">¿La instrucción principal está en las primeras 2 líneas?</span>
+              <p class="text-gray-500 text-xs mt-1">Lo primero se pondera más. No entierres la tarea.</p>
+            </div>
+          </label>
+
+          <label class="checklist-item glass-card rounded-xl p-4 flex items-start gap-4 cursor-pointer hover:border-green-500/30 transition-all group">
+            <input type="checkbox" class="hidden checklist-check" onchange="updateChecklist()">
+            <div class="w-6 h-6 rounded-lg border-2 border-gray-600 group-hover:border-brand-500 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all check-box">
+              <svg class="w-4 h-4 text-green-400 opacity-0 transition-opacity check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <span class="text-white text-sm font-semibold">¿Especificaste el formato de salida exacto?</span>
+              <p class="text-gray-500 text-xs mt-1">JSON, tabla, lista, párrafo. Si no dices qué, inventa.</p>
+            </div>
+          </label>
+
+          <label class="checklist-item glass-card rounded-xl p-4 flex items-start gap-4 cursor-pointer hover:border-green-500/30 transition-all group">
+            <input type="checkbox" class="hidden checklist-check" onchange="updateChecklist()">
+            <div class="w-6 h-6 rounded-lg border-2 border-gray-600 group-hover:border-brand-500 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all check-box">
+              <svg class="w-4 h-4 text-green-400 opacity-0 transition-opacity check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <span class="text-white text-sm font-semibold">¿Eliminaste todo saludo y cortesía?</span>
+              <p class="text-gray-500 text-xs mt-1">"Hola", "por favor", "si puedes" = tokens basura.</p>
+            </div>
+          </label>
+
+          <label class="checklist-item glass-card rounded-xl p-4 flex items-start gap-4 cursor-pointer hover:border-green-500/30 transition-all group">
+            <input type="checkbox" class="hidden checklist-check" onchange="updateChecklist()">
+            <div class="w-6 h-6 rounded-lg border-2 border-gray-600 group-hover:border-brand-500 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all check-box">
+              <svg class="w-4 h-4 text-green-400 opacity-0 transition-opacity check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <span class="text-white text-sm font-semibold">¿Incluyes al menos 1 restricción negativa?</span>
+              <p class="text-gray-500 text-xs mt-1">"Sin intro", "sin emojis", "máx X palabras".</p>
+            </div>
+          </label>
+
+          <label class="checklist-item glass-card rounded-xl p-4 flex items-start gap-4 cursor-pointer hover:border-green-500/30 transition-all group">
+            <input type="checkbox" class="hidden checklist-check" onchange="updateChecklist()">
+            <div class="w-6 h-6 rounded-lg border-2 border-gray-600 group-hover:border-brand-500 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all check-box">
+              <svg class="w-4 h-4 text-green-400 opacity-0 transition-opacity check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <span class="text-white text-sm font-semibold">¿Usas delimitadores para separar datos?</span>
+              <p class="text-gray-500 text-xs mt-1">###, ---, &lt;tag&gt;. Previene confusión instrucción vs dato.</p>
+            </div>
+          </label>
+
+          <label class="checklist-item glass-card rounded-xl p-4 flex items-start gap-4 cursor-pointer hover:border-green-500/30 transition-all group">
+            <input type="checkbox" class="hidden checklist-check" onchange="updateChecklist()">
+            <div class="w-6 h-6 rounded-lg border-2 border-gray-600 group-hover:border-brand-500 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all check-box">
+              <svg class="w-4 h-4 text-green-400 opacity-0 transition-opacity check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <span class="text-white text-sm font-semibold">¿Tienes solo 1 tarea por prompt?</span>
+              <p class="text-gray-500 text-xs mt-1">2+ tareas = dilución. Encadena prompts, no los apiles.</p>
+            </div>
+          </label>
+
+          <label class="checklist-item glass-card rounded-xl p-4 flex items-start gap-4 cursor-pointer hover:border-green-500/30 transition-all group">
+            <input type="checkbox" class="hidden checklist-check" onchange="updateChecklist()">
+            <div class="w-6 h-6 rounded-lg border-2 border-gray-600 group-hover:border-brand-500 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all check-box">
+              <svg class="w-4 h-4 text-green-400 opacity-0 transition-opacity check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <span class="text-white text-sm font-semibold">¿Incluyes ejemplo si el patrón es no-obvio?</span>
+              <p class="text-gray-500 text-xs mt-1">Few-shot &gt; explicación. 1 ejemplo = 50 palabras ahorradas.</p>
+            </div>
+          </label>
+
+          <label class="checklist-item glass-card rounded-xl p-4 flex items-start gap-4 cursor-pointer hover:border-green-500/30 transition-all group">
+            <input type="checkbox" class="hidden checklist-check" onchange="updateChecklist()">
+            <div class="w-6 h-6 rounded-lg border-2 border-gray-600 group-hover:border-brand-500 flex items-center justify-center flex-shrink-0 mt-0.5 transition-all check-box">
+              <svg class="w-4 h-4 text-green-400 opacity-0 transition-opacity check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <span class="text-white text-sm font-semibold">¿El rol asignado es específico?</span>
+              <p class="text-gray-500 text-xs mt-1">"Copywriter DR SaaS" ≠ "escritor". Especificidad = Enfoque.</p>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09. Errores -->
+  <section id="errores" class="section-hidden py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-black text-lg">09</span>
+        <div>
+          <h2 class="text-3xl md:text-4xl font-black text-white">Errores que Queman Tokens</h2>
+          <p class="text-gray-400 text-sm">Los errores más comunes y cuántos tokens desperdician</p>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+        <div class="glass-card rounded-2xl p-6 border-l-4 border-red-500">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-2xl">❌</span>
+            <h3 class="text-white font-bold text-sm">"Actúa como..." sin contexto</h3>
+          </div>
+          <p class="text-gray-400 text-xs mb-3">Decir "actúa como un experto" sin definir qué expertise, en qué sector, con qué metodología = rol vacío que no filtra nada.</p>
+          <div class="flex items-center gap-2 text-red-400 text-xs font-semibold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+            ~40 tokens/iteración desperdiciados
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 border-l-4 border-red-500">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-2xl">❌</span>
+            <h3 class="text-white font-bold text-sm">Pedir "hazlo mejor" sin especificar</h3>
+          </div>
+          <p class="text-gray-400 text-xs mb-3">La IA no sabe qué es "mejor" para ti. Di exactamente: "reduce longitud 50%", "cambia tono a formal".</p>
+          <div class="flex items-center gap-2 text-red-400 text-xs font-semibold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+            ~150 tokens/ciclo desperdiciados
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 border-l-4 border-red-500">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-2xl">❌</span>
+            <h3 class="text-white font-bold text-sm">No limitar longitud de respuesta</h3>
+          </div>
+          <p class="text-gray-400 text-xs mb-3">Sin límite, la IA genera hasta el máximo permitido. Si necesitas 3 líneas y genera 20 párrafos = tokens quemados.</p>
+          <div class="flex items-center gap-2 text-red-400 text-xs font-semibold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+            ~800 tokens/exceso desperdiciados
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 border-l-4 border-orange-500">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-2xl">⚠️</span>
+            <h3 class="text-white font-bold text-sm">Pegar contexto sin delimitar</h3>
+          </div>
+          <p class="text-gray-400 text-xs mb-3">Si pegas 2000 palabras de contexto sueltas, la IA no sabe dónde empieza tu instrucción. Usa siempre delimitadores.</p>
+          <div class="flex items-center gap-2 text-orange-400 text-xs font-semibold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+            ~300 tokens de confusión
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 border-l-4 border-yellow-500">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-2xl">⚠️</span>
+            <h3 class="text-white font-bold text-sm">Usar "piensa paso a paso" sin necesidad</h3>
+          </div>
+          <p class="text-gray-400 text-xs mb-3">CoT quema 200-500 tokens extra. Úsalo SOLO para matemáticas o lógica compleja. Para texto = desperdicio.</p>
+          <div class="flex items-center gap-2 text-yellow-400 text-xs font-semibold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+            ~350 tokens innecesarios
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 border-l-4 border-yellow-500">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-2xl">⚠️</span>
+            <h3 class="text-white font-bold text-sm">Repetir contexto en cada prompt</h3>
+          </div>
+          <p class="text-gray-400 text-xs mb-3">No repitas en cada prompt el contexto completo del proyecto. Usa un "system prompt" o bloque de contexto fijo.</p>
+          <div class="flex items-center gap-2 text-yellow-400 text-xs font-semibold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+            ~200 tokens/prompt desperdiciados
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-brand-900/30 py-16 px-6">
+    <div class="max-w-6xl mx-auto text-center">
+      <div class="flex items-center justify-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-purple-500 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <span class="text-xl font-black text-white">PromptArchitect Ultra</span>
+      </div>
+      <p class="text-gray-400 text-sm max-w-2xl mx-auto mb-8">
+        Cada token tiene un costo. Cada instrucción tiene un impacto.<br>
+        La diferencia entre un usuario y un ingeniero de prompts está en la precisión.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 text-xs text-gray-500 mb-8">
+        <span>TokenDensity</span>
+        <span>•</span>
+        <span>PromptElite</span>
+        <span>•</span>
+        <span>PromptCraft</span>
+        <span>•</span>
+        <span>Kimi Elite</span>
+        <span>•</span>
+        <span>Prompt Mastery</span>
+        <span>•</span>
+        <span>ArchitectPrompts</span>
+      </div>
+      <p class="text-gray-600 text-xs">© 2026 — Creado con precisión. Sin tokens desperdiciados.</p>
+    </div>
+  </footer>
+</main>
+
+<script>
+// Android prompts data
+const androidPrompts = {
+  1: "Genera una aplicación Android completa de e-commerce usando Kotlin con Jetpack Compose como UI framework. Arquitectura MVVM con Clean Architecture. Incluye: pantalla de inicio con carrusel de productos destacados, categorías con iconos, lista de productos con filtros y búsqueda, detalle de producto con galería de imágenes y selector de variantes, carrito de compras persistente con Room Database, checkout con formulario de dirección y selección de método de pago, sistema de autenticación con email y Google Sign-In, perfil de usuario con historial de pedidos. Implementa navegación con Navigation Compose, gestión de estado con StateFlow, inyección de dependencias con Hilt. La app debe compilar directamente generando un APK sin necesidad de Android Studio. Incluye Gradle wrapper y configuración completa de build.",
+  2: "Crea una aplicación de red social Android con Kotlin y Jetpack Compose. Arquitectura MVVM + Repositorio. Funcionalidades: feed infinito con paginación (Paging 3), crear publicaciones con texto e imágenes (CameraX para captura y galería para selección), stories temporales de 24 horas, sistema de likes y comentarios en tiempo real con Firestore, perfiles de usuario con foto, bio y estadísticas, notificaciones push con Firebase Cloud Messaging, búsqueda de usuarios, sistema de seguidores/siguiendo, chat directo entre usuarios. UI moderna con Material 3 Design, tema claro y oscuro. Compilación directa a APK con todas las dependencias de Gradle configuradas.",
+  3: "Desarrolla una aplicación de salud y fitness con Kotlin y Jetpack Compose. Arquitectura MVI con Clean Architecture. Características: dashboard principal con métricas de salud (pasos, calorías, distancia, ritmo cardíaco) usando Health Connect API, registro de entrenamientos con cronómetro y tipos de ejercicio (correr, ciclismo, natación, yoga), gráficos de progreso semanal/mensual/anual con MPAndroidChart, plan de entrenamiento personalizado por objetivos, registro de peso y medidas corporales con seguimiento visual, integración con sensores del dispositivo para conteo de pasos, recordatorios de hidratación y medicación, historial completo de actividad. Diseño con gradientes dinámicos según métricas. APK compilable directamente.",
+  4: "Construye una plataforma de e-learning Android con Kotlin y Jetpack Compose. Arquitectura MVVM + Use Cases. Funcionalidades: catálogo de cursos con categorías y búsqueda, vista detallada del curso con contenido del programa, reproductor de video integrado con ExoPlayer (soporte offline descargando videos), progreso del curso con marcadores de lecciones completadas, quizzes interactivos al final de cada módulo con puntuación, sistema de certificados al completar cursos, favoritos y curso actual en progreso, modo oscuro, perfil con estadísticas de aprendizaje. Almacenamiento offline con Room para contenido descargado. Compilación directa a APK.",
+  5: "Desarrolla una aplicación bancaria digital con Kotlin y Jetpack Compose. Arquitectura MVVM + Clean Architecture. Módulos: pantalla de inicio con balance total y tarjetas visuales, transacciones recientes con categorías y filtros, transferencias entre cuentas con validación, pagos de servicios con historial, gráficos de gastos por categoría con visualización circular y de barras, presupuesto mensual con alertas de límite, autenticación biométrica (huella/rostro) y PIN, notificaciones de transacciones, perfil con datos de tarjeta. Seguridad con biometric API. Diseño premium dark mode con acentos dorados. APK compilable sin Android Studio.",
+  6: "Crea una app de delivery de comida con Kotlin y Jetpack Compose. Arquitectura MVVM + Repositorios. Funcionalidades: pantalla principal con restaurantes cercanos, búsqueda y filtros por tipo de cocina y precio, menú del restaurante con personalizaciones de platos, carrito con resumen y cálculo de envío, seguimiento del pedido en tiempo real con mapa de Google Maps SDK, sistema de calificaciones y reseñas, historial de pedidos con reordenar rápido, gestión de direcciones de entrega, cupones y promociones. Integración con Google Maps para ubicación y tracking. Compilación directa a APK.",
+  7: "Genera una aplicación de reservas de viajes con Kotlin y Jetpack Compose. Arquitectura Clean Architecture + MVVM. Funcionalidades: búsqueda de vuelos con filtros (fechas, aerolínea, escalas), búsqueda de hoteles con mapa interactivo, detalles del destino con galería y descripción, comparador de precios, favoritos para guardar búsquedas, historial de reservas, gestión de itinerarios por viaje, notificaciones de cambios de vuelo, conversión de moneda, checklist de viaje. Diseño con fotos a pantalla completa y UI limpia. Datos mock para demostración. APK compilable directamente.",
+  8: "Desarrolla un reproductor de música con Kotlin y Jetpack Compose. Arquitectura MVVM + Media Service. Características: biblioteca musical que escanea archivos locales del dispositivo, reproductor con controles completos (play/pause, siguiente, anterior, seekbar, shuffle, repeat), cola de reproducción arrastrable, playlists personalizables, ecualizador visual animado sincronizado con la música, búsqueda por artista, álbum y canción, pantalla de reproducción a pantalla completa con arte del álbum, mini-player persistente, modo offline. MediaSession para controles de notification y lock screen. APK compilable.",
+  9: "Crea un agregador de noticias con Kotlin y Jetpack Compose. Arquitectura MVVM + Repositorio. Funcionalidades: feed de noticias con scroll infinito y paginación, categorías personalizables (tecnología, deportes, política, etc.), búsqueda de artículos con autocompletado, modo lectura sin distracciones, guardar artículos para leer después, compartir artículos, notificaciones de breaking news con WorkManager para sync en background, modo oscuro, preferencias de fuentes de noticias. Integración con NewsAPI como fuente de datos mock. Compilación directa a APK.",
+  10: "Construye un gestor de tareas profesional con Kotlin y Jetpack Compose. Arquitectura MVI + Clean Architecture. Funcionalidades: vista Kanban con columnas (Por hacer, En progreso, Hecho) arrastrables, lista de tareas con prioridades y fechas límite, etiquetas y colores personalizables, subtareas y checklists, recordatorios con notificaciones locales, búsqueda y filtros avanzados, estadísticas de productividad semanal, sincronización local con Room, modo enfoque con temporizador Pomodoro integrado, exportar tareas a CSV. Diseño minimalista y limpio. APK compilable sin Android Studio.",
+  11: "Desarrolla un hub de juegos con Kotlin y Jetpack Compose. Arquitectura MVVM. Incluye 3 juegos mini integrados usando Canvas API de Compose: Snake clásico con controles táctiles, Tic-Tac-Toe con IA básica, y un juego de memoria con cartas. Pantalla principal con selector de juegos, tabla de puntuaciones con Room Database, perfil de jugador con estadísticas, logros y medallas, modo oscuro con estética gaming (colores neón), animaciones suaves con Compose Animation APIs. Cada juego con su propia pantalla y sistema de puntuación. APK compilable directamente.",
+  12: "Crea una aplicación del clima con Kotlin y Jetpack Compose. Arquitectura MVVM + Repositorio. Características: clima actual con temperatura, humedad, viento y sensación térmica, pronóstico de 7 días con iconos animados, pronóstico por horas con gráfico de temperatura, mapa de radar con precipitaciones, múltiples ciudades guardadas, detección de ubicación automática con Google Location Services, alertas meteorológicas con notificaciones push, fondo dinámico según condiciones climáticas (soleado, lluvioso, nublado, nocturno), widget para pantalla de inicio. APK compilable sin Android Studio.",
+  13: "Desarrolla un editor de fotos con Kotlin y Jetpack Compose. Arquitectura MVVM. Funcionalidades: captura de fotos con CameraX con modo pro (ISO, exposición, enfoque manual), galería de fotos del dispositivo con grid y vista individual, editor con filtros predefinidos (brillo, contraste, saturación, sepia, B&N), recorte y rotación de imágenes, ajuste de brillo y contraste con sliders, agregar texto y stickers a fotos, compartir imágenes, guardar edits en Room Database. Canvas API para renderizado en tiempo real. Diseño intuitivo tipo app profesional. Compilación directa a APK.",
+  14: "Crea una app de mensajería instantánea con Kotlin y Jetpack Compose. Arquitectura MVVM + Clean Architecture. Funcionalidades: lista de conversaciones con último mensaje y hora, chat individual con burbujas de mensajes, mensajes de texto, emojis, imágenes y notas de voz, indicador de escritura en tiempo real, doble check de leído, búsqueda de conversaciones, contactos, notificaciones push, historial de mensajes persistente con Room, perfil de usuario con foto y estado, grupos de chat. Conexión WebSocket para mensajería en tiempo real con fallback. APK compilable.",
+  15: "Desarrolla una aplicación de meditación y bienestar con Kotlin y Jetpack Compose. Arquitectura MVVM. Características: sesiones guiadas de meditación con temporizador configurable (5, 10, 15, 30 min), sonidos ambientales (lluvia, bosque, océano, fuego) con mezcla de audio, ejercicios de respiración con animación visual de círculo expansivo, seguimiento de racha diaria con calendario de práctica, estadísticas de meditación (minutos totales, sesiones completadas), modo nocturno con colores relajantes, recordatorios diarios, diario de bienestar con estado de ánimo. Animaciones suaves con Compose. APK compilable sin Android Studio.",
+  16: "Construye una plataforma de streaming de video con Kotlin y Jetpack Compose. Arquitectura MVVM + Clean Architecture. Funcionalidades: catálogo de contenido con categorías (películas, series, documentales), búsqueda con filtros, detalle de contenido con sinopsis, elenco, episodios, reproductor de video con ExoPlayer (controles personalizados, calidad, subtítulos, picture-in-picture), mi lista de watchlist, continuar viendo con progreso guardado, recomendaciones basadas en género, perfil con configuración de calidad de stream. Diseño oscuro premium tipo Netflix. APK compilable directamente.",
+  17: "Crea una app de navegación GPS con Kotlin y Jetpack Compose. Arquitectura MVVM. Funcionalidades: mapa interactivo con Google Maps SDK, búsqueda de destinos con autocompletado de lugares, cálculo de ruta con distancia y tiempo estimado, navegación turn-by-turn con instrucciones de voz, modo coche y modo peatón, guardar ubicaciones favoritas, historial de búsquedas, tráfico en tiempo real con colores en la ruta, compartir ubicación en tiempo real, widget de navegación rápida. Integración completa con Google Maps y Location APIs. Compilación directa a APK.",
+  18: "Desarrolla un calendario inteligente con Kotlin y Jetpack Compose. Arquitectura MVVM + Clean Architecture. Funcionalidades: vista mensual, semanal y diaria del calendario, crear eventos con título, descripción, ubicación, hora y color, recordatorios con notificaciones locales, categorías de eventos con colores personalizables, integración con calendario del sistema Android, búsqueda de eventos, eventos recurrentes (diario, semanal, mensual), sincronización con Google Calendar API, vista de agenda con timeline, exportar/importar eventos en formato ICS. APK compilable sin Android Studio.",
+  19: "Construye un marketplace peer-to-peer con Kotlin y Jetpack Compose. Arquitectura MVVM + Repositorio. Funcionalidades: feed de productos con grid y lista, publicar producto con fotos (CameraX), título, descripción, precio y categoría, búsqueda y filtros avanzados por categoría, precio y ubicación, perfil de vendedor con productos y calificaciones, chat entre comprador y vendedor, sistema de favoritos, notificaciones de mensajes y ofertas, gestión de mis publicaciones con edición y eliminación, ubicaciones con Google Maps. Diseño moderno tipo MercadoLibre. APK compilable directamente.",
+  20: "Desarrolla un tracker de hábitos con Kotlin y Jetpack Compose. Arquitectura MVI + Clean Architecture. Funcionalidades: crear hábitos personalizados con icono, color y frecuencia (diario, semanal, personalizado), check-in diario con animación de celebración, racha actual y mejor racha por hábito, vista mensual tipo heatmap (estilo GitHub contributions), estadísticas y gráficos de cumplimiento, categorías de hábitos (salud, productividad, aprendizaje, bienestar), recordatorios configurables, frases motivacionales diarias, modo oscuro con gradientes dinámicos, backup de datos con exportar/importar JSON. Diseño gamificado con logros. APK compilable sin Android Studio."
+};
+
+// Copy to clipboard
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('¡Prompt copiado al portapapeles!');
+  });
+}
+
+function copyCode(btn) {
+  const codeBlock = btn.closest('.glass-card').querySelector('pre, code') || btn.closest('.code-block').querySelector('pre');
+  if (codeBlock) {
+    copyToClipboard(codeBlock.textContent.trim());
+  }
+  btn.classList.add('copied');
+  setTimeout(() => btn.classList.remove('copied'), 2000);
+}
+
+function copyAndroidPrompt(btn, id) {
+  if (androidPrompts[id]) {
+    copyToClipboard(androidPrompts[id]);
+  }
+  btn.classList.add('copied');
+  setTimeout(() => btn.classList.remove('copied'), 2000);
+}
+
+// Toast notification
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.remove('hidden');
+  setTimeout(() => toast.classList.add('hidden'), 3000);
+}
+
+// Token calculator
+function calcTokens() {
+  const input = parseInt(document.getElementById('tokenInput').value) || 0;
+  const efficiency = parseInt(document.getElementById('efficiencySlider').value) || 85;
+  const saved = Math.round(input * (efficiency / 100));
+  const cost = (saved * 0.00003).toFixed(4);
+  document.getElementById('savedTokens').textContent = '-' + saved;
+  document.getElementById('moneySaved').textContent = '$' + cost;
+}
+
+// Prompt generator
+function generatePrompt() {
+  const obj = document.getElementById('objInput').value || '[OBJETIVO]';
+  const stack = document.getElementById('stackInput').value || '[STACK]';
+  const rest = document.getElementById('restInput').value || '[RESTRICCIONES]';
+  
+  const prompt = `Rol: Experto en ${stack}
+Tarea: ${obj}
+
+Especificaciones:
+- Stack: ${stack}
+- Output: código funcional, compilable, listo para producción
+
+Restricciones:
+- ${rest}
+- Sin comentarios innecesarios
+- Sin explicaciones
+- Output SOLO código
+
+Formato: código limpio y bien estructurado`;
+
+  document.getElementById('promptOutput').textContent = prompt;
+  document.getElementById('generatedPrompt').classList.remove('hidden');
+}
+
+// Tabs
+document.querySelectorAll('.code-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.code-tab').forEach(t => {
+      t.classList.remove('active', 'bg-brand-500/20', 'text-brand-400', 'border', 'border-brand-500/30');
+      t.classList.add('text-gray-400');
+    });
+    this.classList.add('active', 'bg-brand-500/20', 'text-brand-400', 'border', 'border-brand-500/30');
+    this.classList.remove('text-gray-400');
+    
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+  });
+});
+
+// Category filter
+function filterByCategory(btn) {
+  document.querySelectorAll('.category-badge').forEach(b => {
+    b.classList.remove('active');
+    b.classList.add('text-gray-400');
+  });
+  btn.classList.add('active');
+  btn.classList.remove('text-gray-400');
+  
+  const category = btn.dataset.category;
+  filterPrompts();
+}
+
+function filterPrompts() {
+  const search = document.getElementById('promptSearch').value.toLowerCase();
+  const activeCategory = document.querySelector('.category-badge.active')?.dataset.category || 'all';
+  
+  let visibleCount = 0;
+  document.querySelectorAll('#promptGrid .prompt-card').forEach(card => {
+    const name = card.dataset.name || '';
+    const category = card.dataset.category || '';
+    const matchesSearch = name.includes(search);
+    const matchesCategory = activeCategory === 'all' || category === activeCategory;
+    
+    if (matchesSearch && matchesCategory) {
+      card.style.display = '';
+      visibleCount++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+  
+  document.getElementById('noResults').classList.toggle('hidden', visibleCount > 0);
+}
+
+// Checklist
+function updateChecklist() {
+  const checks = document.querySelectorAll('.checklist-check');
+  const items = document.querySelectorAll('.checklist-item');
+  let checked = 0;
+  
+  checks.forEach((check, i) => {
+    const item = items[i];
+    const checkBox = item.querySelector('.check-box');
+    const checkIcon = item.querySelector('.check-icon');
+    
+    if (check.checked) {
+      checked++;
+      checkBox.classList.add('bg-green-500/20', 'border-green-500');
+      checkIcon.classList.remove('opacity-0');
+    } else {
+      checkBox.classList.remove('bg-green-500/20', 'border-green-500');
+      checkIcon.classList.add('opacity-0');
+    }
+  });
+  
+  document.getElementById('checklistScore').textContent = checked + '/8';
+  document.getElementById('checklistProgress').style.width = (checked / 8 * 100) + '%';
+  
+  const msg = document.getElementById('checklistMsg');
+  if (checked === 8) {
+    msg.textContent = '🎉 ¡Perfecto! Tu prompt está optimizado al máximo.';
+    msg.className = 'text-xs text-green-400';
+  } else if (checked >= 5) {
+    msg.textContent = '✅ Buen trabajo. Revisa los puntos faltantes.';
+    msg.className = 'text-xs text-yellow-400';
+  } else if (checked >= 3) {
+    msg.textContent = '⚠️ Necesitas mejorar varios puntos.';
+    msg.className = 'text-xs text-orange-400';
+  } else {
+    msg.textContent = '❌ Marca los checkpoints para evaluar tu prompt';
+    msg.className = 'text-xs text-gray-500';
+  }
+}
+
+// Scroll progress
+function updateScrollProgress() {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = Math.round((scrollTop / docHeight) * 100);
+  document.getElementById('progressBar').style.width = progress + '%';
+  document.getElementById('progressPercent').textContent = progress + '%';
+}
+
+// Active nav link
+function updateActiveNav() {
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+  
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 100;
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  
+  navLinks.forEach(link => {
+    link.classList.remove('nav-active', 'text-white');
+    link.classList.add('text-gray-400');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('nav-active', 'text-white');
+      link.classList.remove('text-gray-400');
+    }
+  });
+}
+
+// Intersection Observer for animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('section-visible');
+      entry.target.classList.remove('section-hidden');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.section-hidden').forEach(section => {
+  observer.observe(section);
+});
+
+// Mobile menu
+document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+  document.getElementById('mobileSidebar').classList.remove('hidden');
+  document.getElementById('mobileNav').innerHTML = document.getElementById('sidebarNav').innerHTML;
+});
+
+document.getElementById('mobileOverlay').addEventListener('click', () => {
+  document.getElementById('mobileSidebar').classList.add('hidden');
+});
+
+// Event listeners
+window.addEventListener('scroll', () => {
+  updateScrollProgress();
+  updateActiveNav();
+});
+
+// Initialize
+calcTokens();
+</script>
+
+</body>
+</html>
+
